@@ -1,0 +1,116 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>News | List</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+                        <!-- Datatables Header -->
+                        <div class="content-header">
+                            <div class="header-section">
+                                <h1>
+                                    <i class="fa fa-table"></i>News List<br><small>You can Add, Edit and Delete List</small>
+                                </h1>
+                            </div>
+                        </div>
+                        <ul class="breadcrumb breadcrumb-top">
+                            <li>News</li>
+                            <li><a href="/panel/news/list">List</a></li>
+                        </ul>
+                        <!-- END Datatables Header -->
+
+    <!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+            <h2><strong>News</strong> List</h2>
+        </div>
+        <!-- <p><a href="https://datatables.net/" target="_blank">DataTables</a> -->
+
+        <div class="table-responsive">
+            <table id="" class="table table-vcenter table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Image<i class="gi gi-user"></i></th>
+                        <th>Title</th>
+                        <th>Date|Time</th>
+                        <th>Category</th>
+                        <th>writer</th>
+                        <th>Status</th>
+                        <th>Views</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cc in newspage %}
+                    <tr>
+                        <td class="text-center">{{cc.rand}}</td>
+                        <td class="text-center"><img style="width: 50px; height:50px;" src="{{cc.picurl}}" alt="avatar" class="img-circle"></td>
+                        <th>{{cc.name}}</th>
+                        <td>{{cc.date}}|{{cc.time}}</td>
+                        <th>{{cc.subcatname}}</th>
+                        <td>{{cc.writer}}</td>
+                        {% if cc.activate == 0 %}
+                        <td class="text-center" bgcolor="red">Pending</td>
+                        {% elif cc.activate == 1 %}
+                        <td class="text-center" bgcolor="green">Confirmed</td>   
+                        {% endif %}
+                        <td class="text-center">{{cc.newsview}}</td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="{% url 'news_edit' pk=cc.pk %}" data-toggle="tooltip" title="Edit" class="btn btn-xs btn-default"><i class="fa fa-pencil">Edit</i></a>
+                                <a href="{% url 'news_delete' pk=cc.pk %}" data-toggle="tooltip" title="Delete" class="btn btn-xs btn-danger"><i class="fa fa-times">Delete</i></a>
+                                <!-- "perms" is from main app Panel function-->
+                                {% if perms.main.masteruser %}
+                                {% if cc.activate == 0 %}
+                                <a href="{% url 'news_publish' pk=cc.pk %}" data-toggle="tooltip"  title="Publish" class="btn btn-xs btn-default"><i class="fa fa-pencil">Publish</i></a>
+                                {% endif %}
+                                {% endif %}
+                                {% if perms.main.masteruser %}
+                                {% if cc.activate == 1 %}
+                                <a href="{% url 'news_publish' pk=cc.pk %}" data-toggle="tooltip"  title="Unpublish" class="btn btn-xs btn-default"><i class="fa fa-pencil">Unpublish</i></a>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                    
+                </tbody>    
+            </table>
+            <!-- Paging of news by paginator-->
+            Page {{newspage.number}} Of {{newspage.paginator.num_pages}}
+        <br/><br/>
+        {% if newspage.has_previous %}
+        <a href="?page={{newspage.previous_page_number}}" data-toggle="tooltip" title="Previous" class="btn btn-xs btn-default">Prev</a>
+        {% endif %}
+        <!-- All Pages in for loop -->
+        {% for i in newspage.paginator.page_range %}
+        <!-- If current page same as i then disable that page number-->
+        {% if newspage.number == i %}
+        <a href="#" onclick="return false;" data-toggle="tooltip" title="{{Disables}}" class="btn btn-xs btn-default">{{i}}</a>
+        {% else %}
+            <!-- Next All Pages-->
+        <a href="?page={{i}}" data-toggle="tooltip" title="{{i}}" class="btn btn-xs btn-default">{{i}}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if newspage.has_next %}
+        <a href="?page={{newspage.next_page_number}}" data-toggle="tooltip" title="Next" class="btn btn-xs btn-default">Next</a>
+        {% endif %}
+        </div>
+    </div>
+    <!-- END Datatables Content -->
+
+
+{% endblock %}
+
+
+   {% block footerblock %}
+    
+      <script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+      <script>$(function(){ TablesDatatables.init(); });</script>
+        {% endblock %}

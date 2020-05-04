@@ -1,0 +1,81 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Contact | List</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+                        <!-- Datatables Header -->
+                        <div class="content-header">
+                            <div class="header-section">
+                                <h1>
+                                    <i class="fa fa-table"></i>Contact List<br><small>You can Add, Edit and Delete List</small>
+                                </h1>
+                            </div>
+                        </div>
+                        <ul class="breadcrumb breadcrumb-top">
+                            <li>Contact</li>
+                            <li><a href="/panel/contact/form">List</a></li>
+                        </ul>
+                        <!-- END Datatables Header -->
+
+    <!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+            <h2><strong>Contact</strong> List</h2>
+        </div>
+        <!-- <p><a href="https://datatables.net/" target="_blank">DataTables</a> -->
+
+        <div class="table-responsive">
+            <table id="example-datatable" class="table table-vcenter table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <!--<th class="text-center">Image<i class="gi gi-user"></i></th> -->
+                        <th>Name</th> 
+                        <th>Date|Time</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for con in con %}
+                    <tr>
+                        <td class="text-center">{{con.pk}}</td>
+                        <!--<td class="text-center"><img style="width: 50px; height:50px;" src="{{cc.picurl}}" alt="avatar" class="img-circle"></td>-->
+                        <th>{{con.name}}</th>
+                        <td>{{con.date}}|{{con.time}}</td>
+                        <td>{{con.email}}</td>
+                        <th>{{con.message}}</th>
+                        
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a href="#" data-toggle="tooltip" title="Answer" class="btn btn-xs btn-default"><i >Answer</i></a>
+                                <a href="{% url 'contact_del' pk=con.pk %}" data-toggle="tooltip" title="Delete" class="btn btn-xs btn-danger"><i class="fa fa-times">Delete</i></a>
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                    
+                </tbody>    
+            </table>
+        
+        
+        </div>
+    </div>
+    <!-- END Datatables Content -->
+
+
+{% endblock %}
+
+
+   {% block footerblock %}
+    
+      <script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+      <script>$(function(){ TablesDatatables.init(); });</script>
+        {% endblock %}

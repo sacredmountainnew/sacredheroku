@@ -1,0 +1,133 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Edit | News</title>
+
+{% endblock %}
+{% block ckeditorblock %}
+
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+           <!-- Datatables Header -->
+           <div class="content-header">
+            <div class="header-section">
+                <h1>
+                    <i class="fa fa-table"></i>Edit News<br><small>You can Edit and Save List</small>
+                </h1>
+            </div>
+        </div>
+        <ul class="breadcrumb breadcrumb-top">
+            <li>News</li>
+            <li><a href="/panel/news/edit/pk">Edit</a></li>
+        </ul>
+        <!-- END Datatables Header -->
+
+<!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+
+</div>                   
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Basic Form Elements Block -->
+        <div class="block">
+            <!-- Basic Form Elements Title -->
+            <div class="block-title">
+                
+                <h2><strong>Edit</strong> News</h2>
+            </div>
+            <!-- END Form Elements Title -->
+
+            <!-- Basic Form Elements Content -->
+            <form action="{% url 'news_edit' pk=pk %}" method="post" enctype="multipart/form-data" class="form-horizontal form-bordered">
+                {% csrf_token %} 
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <input type="text" id ="newstitle" name="newstitle" value="{{news.name}}" class="form-control" placeholder="News Title">
+                    </div>
+                    <div class="col-md-6">
+                        
+                        <select id="newssubcat" name="newssubcat" class="select-chosen"dd data-placeholder="Choose a Category.." style="width: 250px;">
+                            <option value="{{news.subcatid}}">{{news.subcatname}}</option>
+                            {% for i in subcat %}
+                            <option value="{{i.pk}}">{{i.name}}</option>
+                            {% endfor %}
+
+                        </select>
+                              
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <textarea type="text" id ="newssum" name="newssum" rows="5" class="form-control" placeholder="News Summary">{{news.short_text}}</textarea>
+                    </div>
+                    <script>
+
+                        CKEDITOR.replace('newssum')
+                    </script>
+              
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <textarea type="text" id ="newsbody" name="newsbody" rows="5" class="form-control" placeholder="News Body">{{news.body_text}}</textarea>
+                            </div>
+
+                            <script>
+
+                                CKEDITOR.replace('newsbody')
+                            </script>
+
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <input type="file" id ="myfile" name="myfile" rows="5" class="form-control" placeholder="File Name"></input>
+                                    <textarea type="text" id ="tag" name="tag" rows="5" class="form-control" placeholder="Tags">{{news.tag}}</textarea>
+                                    <br>
+                                </div>
+
+                            
+                                <div class="col-md-6">
+                                    <td class="text-center"><img style="width: 250px; height:250px;" src="{{news.picurl}}" ></td>
+                                </div>
+
+                               
+                                
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-angle-right"></i> Submit</button>
+                                    <button type="reset" class="btn btn-sm btn-warning"><i class="fa fa-repeat"></i> Reset</button>
+   
+                                </div>
+                            
+            </form>
+            <!-- END Basic Form Elements Content -->
+        </div>
+        <!-- END Basic Form Elements Block -->
+    </div>       
+
+{% endblock %}
+
+
+
+   {% block footerblock %}
+      
+      <script src="{% static 'back/js/pages/formsGeneral.js' %}"></script>
+      <script>$(function(){ FormsGeneral.init(); });</script>
+  
+      <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+        {% endblock %}

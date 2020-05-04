@@ -1,0 +1,38 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Error | Page</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+           <!-- Datatables Header -->
+           <div class="content-header">
+            <div class="header-section">
+                <h1>
+                    <i class="fa fa-table"></i>Error<br><small>{{error}}</small>
+                </h1>
+            </div>
+        </div>
+        
+
+
+{% endblock %}
+
+
+
+   {% block footerblock %}
+      
+      <script src="{% static 'back/js/pages/formsGeneral.js' %}"></script>
+      <script>$(function(){ FormsGeneral.init(); });</script>
+  
+      <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+        {% endblock %}

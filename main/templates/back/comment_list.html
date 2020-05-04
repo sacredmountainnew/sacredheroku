@@ -1,0 +1,94 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Comment | List</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+                        <!-- Datatables Header -->
+                        <div class="content-header">
+                            <div class="header-section">
+                                <h1>
+                                    <i class="fa fa-table"></i>Comment List<br><small>You can Add, Edit and Delete List</small>
+                                </h1>
+                            </div>
+                        </div>
+                        <ul class="breadcrumb breadcrumb-top">
+                            <li>Comment</li>
+                            <li><a href="/panel/newsdetail/list">List</a></li>
+                        </ul>
+                        <!-- END Datatables Header -->
+
+    <!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+            <h2><strong>Comment</strong> List</h2>
+        </div>
+        <!-- <p><a href="https://datatables.net/" target="_blank">DataTables</a> -->
+
+        <div class="table-responsive">
+            <table id="example-datatable" class="table table-vcenter table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th>Comment</th>
+                        <th>Username</th>
+                        <th>Date|Time</th>
+                        <th>Email</th> 
+                        <th>Status</th>            
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cc in comment %}
+                    <tr>
+                        <td class="text-center">{{cc.pk}}</td>
+                        <td>{{cc.comment}}</td>
+                        <th>{{cc.name}}</th>
+                        <td>{{cc.date}}|{{cc.time}}</td>
+                        <th>{{cc.email}}</th>
+                        {% if cc.status == 0 %}
+                        <td class="text-center" bgcolor="red">Pending</td>
+                        {% elif cc.status == 1 %}
+                        <td class="text-center" bgcolor="green">Confirmed</td>   
+                        {% endif %}
+                        <td class="text-center">
+                            <div class="btn-group">
+                               <!-- "perms" is from main app Panel function-->
+                               {% if perms.main.masteruser %}
+                               {% if cc.status == 0 %}
+                               <a href="{% url 'comment_publish' pk=cc.pk %}" data-toggle="tooltip"  title="Publish" class="btn btn-xs btn-default"><i class="fa fa-pencil">Publish</i></a>
+                               {% endif %}
+                               {% endif %}
+                               {% if perms.main.masteruser %}
+                               {% if cc.status == 1 %}
+                               <a href="{% url 'comment_publish' pk=cc.pk %}" data-toggle="tooltip"  title="Unpublish" class="btn btn-xs btn-default"><i class="fa fa-pencil">Unpublish</i></a>
+                               {% endif %}
+                               {% endif %}
+                                <a href="{% url 'comment_delete' pk=cc.pk %}" data-toggle="tooltip" title="Delete" class="btn btn-xs btn-danger"><i class="fa fa-times">Delete</i></a>
+               
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                    
+                </tbody>    
+            </table>
+        
+        
+        </div>
+    </div>
+    <!-- END Datatables Content -->
+
+
+{% endblock %}
+
+
+   {% block footerblock %}
+    
+      <script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+      <script>$(function(){ TablesDatatables.init(); });</script>
+        {% endblock %}

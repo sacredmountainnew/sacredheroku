@@ -1,0 +1,153 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Site | Settings</title>
+
+{% endblock %}
+
+{% block ckeditorblock %}
+
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+           <!-- Datatables Header -->
+           <div class="content-header">
+            <div class="header-section">
+                <h1>
+                    <i class="fa fa-table"></i>Site Settings<br><small>You can Add, Edit and Delete List</small>
+                </h1>
+            </div>
+        </div>
+        <ul class="breadcrumb breadcrumb-top">
+            <li>Site</li>
+            <li><a href="/panel/setting/">Settings</a></li>
+        </ul>
+        <!-- END Datatables Header -->
+
+<!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+
+</div>                   
+
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Basic Form Elements Block -->
+        <div class="block">
+            <!-- Basic Form Elements Title -->
+            <div class="block-title">
+                
+                <h2><strong>Site</strong> Settings</h2>
+            </div>
+            <!-- END Form Elements Title -->
+
+            <!-- Basic Form Elements Content -->
+            <form action="{% url 'site_setting' %}" method="post" enctype="multipart/form-data" class="form-horizontal form-bordered">
+                {% csrf_token %} 
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <input type="text" id ="name" name="name" value="{{site.name}}" class="form-control" placeholder="Site Title">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id ="tel" name="tel" value="{{site.tel}}" class="form-control" placeholder="Telephone">
+                       
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <input type="text" id ="fb" name="fb" value="{{site.fb}}" class="form-control" placeholder="Facebook">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" id ="tw" name="tw" value="{{site.tw}}" class="form-control" placeholder="Twitter">
+                               
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <input type="text" id ="yt" name="yt" value="{{site.yt}}" class="form-control" placeholder="Youtube">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" id ="link" name="link" value="{{site.link}}" class="form-control" placeholder="Link">
+                                       
+                                            </div>
+                                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <textarea type="text" id ="txt" name="txt" rows="5" class="form-control" placeholder="News Summary">{{site.about}}</textarea>
+                    </div>
+
+                    <script>
+
+    CKEDITOR.replace( 'txt')
+
+                    </script>
+       
+              
+       <div class="form-group">
+        <div class="col-md-6">
+            <input type="file" id ="myfile2" name="myfile2" rows="5" class="form-control" placeholder="File Name Head"></input>
+            
+           
+        </div>
+        <div class="col-md-6">
+            <td class="text-center"><img style="width: 125px; height:75px;" src="{{site.picurlhead}}" ></td>
+        </div>
+    </div>
+    <div><br></div>
+
+                            <div class="form-group">
+                                <div class="col-md-6">
+                                    <input type="file" id ="myfile" name="myfile" class="form-control" placeholder="File Name Foot"></input>
+                                    
+                                   
+                                </div>
+                                <div class="col-md-6">
+                                    <td class="text-center"><img style="width: 125px; height:75px;" src="{{site.picurlfoot}}" ></td>
+                                </div>
+                            </div>
+
+                            
+
+                                <div><br></div>
+                                
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-angle-right"></i> Submit</button>
+                                    <button type="reset" class="btn btn-sm btn-warning"><i class="fa fa-repeat"></i> Reset</button>
+   
+                                </div>
+                            
+            </form>
+            <!-- END Basic Form Elements Content -->
+        </div>
+        <!-- END Basic Form Elements Block -->
+    </div>       
+
+{% endblock %}
+
+
+
+   {% block footerblock %}
+      
+      <script src="{% static 'back/js/pages/formsGeneral.js' %}"></script>
+      <script>$(function(){ FormsGeneral.init(); });</script>
+  
+      <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+        {% endblock %}

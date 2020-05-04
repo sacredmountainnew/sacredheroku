@@ -1,0 +1,74 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>News| Email</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+                        <!-- Datatables Header -->
+                        <div class="content-header">
+                            <div class="header-section">
+                                <h1>
+                                    <i class="fa fa-table"></i>News Email<br><small>You can Add, Edit and Delete List</small>
+                                </h1>
+                            </div>
+                        </div>
+                        <ul class="breadcrumb breadcrumb-top">
+                            <li>News</li>
+                            <li><a href="/panel/newsletter/email">Email</a></li>
+                        </ul>
+                        <!-- END Datatables Header -->
+
+    <!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+            <h2><strong>News</strong> Email</h2>
+        </div>
+        <!-- <p><a href="https://datatables.net/" target="_blank">DataTables</a> -->
+
+        <div class="table-responsive">
+            <table id="example-datatable" class="table table-vcenter table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th >ID</th>
+                        <th >Email</th>
+                        
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cc in email %}
+                    <tr>
+                        <td >{{cc.pk}}</td>
+                        <td >{{cc.text}}</td>
+                        
+                        <td class="text-center">
+                            <div class="btn-group">
+                             
+                                <a href="{% url 'newsletter_delete' pk=cc.pk %}" data-toggle="tooltip" title="Delete" class="btn btn-xs btn-danger"><i class="fa fa-times">Delete</i></a>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                  {% endfor %}
+                    
+                </tbody>    
+            </table>
+        
+        
+        </div>
+    </div>
+    <!-- END Datatables Content -->
+
+
+{% endblock %}
+
+
+   {% block footerblock %}
+    
+      <script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+      <script>$(function(){ TablesDatatables.init(); });</script>
+        {% endblock %}
