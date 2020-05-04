@@ -115,10 +115,10 @@ def news_list(request):
 
     #If the logged user is admin list all news
     elif perm == 1:
-        news = News.objects.all()
+        news = News.objects.all().order_by('-pk')
         #Pagination is preventing all pages loading in a single page
         #Pagination of News List(2 news per page)
-        paginator = Paginator(news, 2)
+        paginator = Paginator(news, 4)
 
         page = request.GET.get('page')#Here 'page' is class name of table.
 
