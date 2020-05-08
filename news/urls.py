@@ -11,5 +11,8 @@ urlpatterns = [
     url(r'^panel/news/publish/(?P<pk>\d+)/$', views.news_publish, name='news_publish'),
     url(r'^urls/(?P<rand>\d+)/$', views.news_detail_short, name='news_detail_short'),
     url(r'^show/all/news/(?P<word>.*)/$', views.show_all_news, name='show_all_news'),
+    url(r'^all/news/$', views.all_news, name='all_news'),
+    url(r'^search/$', views.all_news_search, name='all_news_search'),
+
 
 ]

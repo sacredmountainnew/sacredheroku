@@ -1,0 +1,57 @@
+{% extends 'back/master.html' %}
+
+{% load static %}
+
+{% block headblock %}
+
+<title>Answer | Form</title>
+
+{% endblock %}
+
+{%block mainblock %}
+                
+                        <!-- Datatables Header -->
+                        <div class="content-header">
+                            <div class="header-section">
+                                <h1>
+                                    <i class="fa fa-table"></i>Answer Form<br><small>You can Add Answer</small>
+                                </h1>
+                            </div>
+                        </div>
+                        <ul class="breadcrumb breadcrumb-top">
+                            <li>Contact</li>
+                            <li><a href="/panel/contact/form">List</a></li>
+                        </ul>
+                        <!-- END Datatables Header -->
+
+    <!-- Datatables Content -->/    <div class="block full">/        <div class="block-title">
+            <h2><strong>Answer</strong> Form</h2>
+        </div>
+        <!-- <p><a href="https://datatables.net/" target="_blank">DataTables</a> -->
+
+            <form action="{% url 'answer_comments' pk=pk %}" method="post" enctype="multipart/form-data" class="form-horizontal form-bordered">
+                {% csrf_token %} 
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <textarea type="text" rows="10" id ="text" name="text" class="form-control">Answer</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-angle-right"></i> Submit</button>
+                        <button type="reset" class="btn btn-sm btn-warning"><i class="fa fa-repeat"></i> Reset</button>
+
+                            </div>
+                        </div>
+
+    </div>
+    <!-- END Datatables Content -->
+
+
+{% endblock %}
+
+
+   {% block footerblock %}
+    
+      <script src="{% static 'back/js/pages/tablesDatatables.js' %}"></script>
+      <script>$(function(){ TablesDatatables.init(); });</script>
+        {% endblock %}

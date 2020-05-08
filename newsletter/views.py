@@ -6,6 +6,8 @@ from django.contrib.auth.models import User, Group, Permission
 #To add permission to logged user to get which options use / this library very Important
 from django.contrib.contenttypes.models import ContentType
 #For regex password complexity verification
+from django.core.mail import send_mail
+from django.conf import settings
 
 def news_letter(request):
 
@@ -103,6 +105,66 @@ def newsletter_delete(request, pk):
         return redirect('news_email')
     elif status == 2:
         return redirect('news_phone')
+
+def send_email(request):
+
+       #login check started
+    if not request.user.is_authenticated:
+        return redirect('my_login')
+    #login check end
+
+    perm = 0
+    #"request.user" means current logged User
+    for i in request.user.groups.all():
+        if i.name == "masteruser": perm = 1
+
+    if perm == 0:
+        error = "Access Denied"
+        return render(request, 'back/error.html',{'error': error})
+
+    if request.method == 'POST':
+        
+        text = request.POST.get('text')
+        
+        emaillist = []
+        #Filtering Emails only(status=1 is email, status=2 is phonenumber)
+        for i in NewsLetter.objects.filter(status=1):
+            emaillist.append(i.text)
+        
+
+
+        subject = 'Reply Mail'
+        message = text
+        emails = emaillist
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, message, from_email, emails)
+
+    return redirect('news_email')
+
+#To delete checked list
+def check_emaillist(request):
+
+    if request.method == 'POST':
+
+        '''
+        #First Method to delete
+        for i in NewsLetter.objects.filter(status=1):
+
+            check = request.POST.get(str(i.pk))
+
+            if str(check) == 'on':
+                ch = NewsLetter.objects.get(pk=i.pk)
+                ch.delete()
+'''     
+        #Second method to delete
+        check = request.POST.getlist('checks[]')
+        
+        for i in check:
+            check = NewsLetter.objects.get(pk=i)
+            check.delete()
+        
+
+    return redirect('news_email')
 
 
 

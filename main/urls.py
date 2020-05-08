@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^panel/change/password/$', views.change_pass, name='change_pass'),
     url(r'^register/$', views.my_register, name='my_register'),
+    url(r'^panel/answer/comments/(?P<pk>\d+)/$', views.answer_comments, name='answer_comments'),
     
 ]
 

@@ -8,11 +8,17 @@ class Main(models.Model):
     name = models.CharField(max_length=30)
     about = models.TextField()
     aboutdetail = models.TextField(default="")
+
     fb = models.CharField(max_length=30)
     tw = models.CharField(max_length=30)
     yt = models.CharField(max_length=30)
     tel = models.CharField(max_length=30)
     link = models.CharField(max_length=30)
+
+    seo_name = models.CharField(default="", max_length=200)
+    seo_keyword = models.TextField(default="")
+
+
     picurlfoot = models.TextField(default="")
     picnamefoot = models.TextField(default="")
     picurlhead = models.TextField(default="")

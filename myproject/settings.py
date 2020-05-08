@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '^4d-=g!b8nv&n=^a&y6i#7maw3u^-@
 DEBUG = False
 #DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['sacredmounatin.in', 'www.sacredmounain.in', '127.0.0.1', 'sacredmountain.herokuapp.com']
+ALLOWED_HOSTS = ['sacredmounatin.in', 'www.sacredmounain.in', '127.0.0.1', 'www.sacredmountain.herokuapp.com', 'sacredmountain.herokuapp.com']
 
 
 # Application definition
@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'blacklist',
     'django_crontab',
     'qr_code',
+    'django.contrib.sitemaps',
+    'rest_framework',
     
 ]
 
@@ -178,3 +180,25 @@ CRONJOBS = [
 #DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mailbdeepaks@gmail.com'
+EMAIL_HOST_PASSWORD = '9020559616'
+
+
+#SSL(https)
+
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
+X_FRAME_OPTIONS = 'DENY'

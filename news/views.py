@@ -10,8 +10,11 @@ from django.contrib.contenttypes.models import ContentType
 import random
 from comment.models import Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from itertools import chain
 
 # Create your views here.
+#Global variable for search(otherways second page from search pagination will not work)
+mysearch = ""
 
 def news_detail(request, word):
      
@@ -51,7 +54,7 @@ def news_detail(request, word):
     comment = Comment.objects.filter(news_pk=code, status=1).order_by('-pk')[:10]
     cmcount = len(comment)
 
-    return render(request, 'front/news_detail.html', {'site': site, 'news': news, 'cat':cat, 'subcat': subcat, 'lastnews': lastnews, 'shownews':shownews, 'popnews':popnews, 'popnews2':popnews2, 'tag':tag, 'trend':trend, 'code':code, 'comment':comment, 'cmcount':cmcount, 'link':link})
+    return render(request, 'front/news_detail.html', {'site': site, 'news': news, 'cat':cat, 'subcat': subcat, 'lastnews': lastnews, 'shownews':shownews, 'popnews':popnews, 'popnews2':popnews2, 'tag':tag, 'trend':trend, 'code':code, 'comment':comment, 'cmcount':cmcount, 'link':link, 'tagname':tagname})
 
 #Shortening the url to random number
 def news_detail_short(request, rand):
@@ -476,5 +479,266 @@ def show_all_news(request, word):
 
 
       
+def all_news(request):
+
+    trend = Trending.objects.all().order_by('-pk')[:5]
+    site = Main.objects.get(pk=1)
+    cat = Category.objects.all()
+    subcat = SubCategory.objects.all()
+    popnews2 = News.objects.filter(activate=1).order_by('-newsview')[:3]
+    newscat = News.objects.filter(activate=1).order_by('-pk')
+
+    f_rom = []
+    t_o = []
+
+    for i in range(30):
+        #datetime.datetime.now() + datetime.timedelta(days=i)means it will add 1  for range upto 9
+        #datetime.datetime.now() - datetime.timedelta(days=i)means it will minus 1 for range upto 9
+        now = datetime.datetime.now() - datetime.timedelta(days=i)
+        year = now.year
+        month = now.month
+        day = now.day
+        hour = now.hour
+        minute = now.minute
+
+        if len(str(day)) == 1:
+            day = "0" + str(day)
+        if len(str(month)) == 1:
+            month = "0" + str(month)
+        
+        now = str(day) + "/" + str(month) + "/" + str(year)
+
+        f_rom.append(now)
     
+    for i in range(30):
+        #datetime.datetime.now() + datetime.timedelta(days=i)means it will add 1  for range upto 9
+        #datetime.datetime.now() - datetime.timedelta(days=i)means it will minus 1 for range upto 9
+        now = datetime.datetime.now() - datetime.timedelta(days=i)
+        year = now.year
+        month = now.month
+        day = now.day
+        hour = now.hour
+        minute = now.minute
+
+        if len(str(day)) == 1:
+            day = "0" + str(day)
+        if len(str(month)) == 1:
+            month = "0" + str(month)
+        
+        now = str(day) + "/" + str(month) + "/" + str(year)
+
+        t_o.append(now)
+
+    paginator = Paginator(newscat, 12)
+    page = request.GET.get('page')#Here 'page' is class name of table.
+
+    try:
+        newspage = paginator.page(page)
+
+    except EmptyPage:
+        newspage = paginator.page(paginator, num_page)
+
+    except PageNotAnInteger:
+        newspage = paginator.page(1)
+
+    return render(request, 'front/showall_news.html', {'newscat':newscat, 'site':site, 'trend':'trend', 'cat':cat, 'subcat':subcat, 'popnews2':popnews2, 'f_rom':f_rom, 't_o':t_o})
+
+def all_news_search(request):
+
+    if request.method == 'POST':
+
+        txt = request.POST.get('txt')
+        catid = request.POST.get('cat')
+        f_rom = request.POST.get('from')
+        t_o = request.POST.get('to')
+        mysearch = txt
+
+        if f_rom != "0" and t_o != "0":#means fromdate and to date are selected
+            if t_o < f_rom:
+                msg = "Date Error!!!"
+                return render(request, 'front/msgbox.html', {'msg':msg})
+
+      
+        if catid == "0":#For searching in all news
+            #For searching category wise
+            if f_rom != "0" and t_o != "0":#both from date and to date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, date__gte=f_rom, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, date__gte=f_rom, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, date__gte=f_rom, date__lte=t_o)
+
+            elif f_rom != "0":#only from date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, date__gte=f_rom)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, date__gte=f_rom)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, date__gte=f_rom)
+            
+            elif t_o != "0":#only to date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, date__lte=t_o)
+            
+
+            else:#show all news with search
+
+                query1 = News.objects.filter(activate=1, name__contains=txt)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt)
+
+            
+        else:
+
+            if f_rom != "0" and t_o != "0":#both from date and to date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, catid=catid, date__gte=f_rom, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, catid=catid, date__gte=f_rom, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, catid=catid, date__gte=f_rom, date__lte=t_o)
+            
+            elif f_rom != "0":#only from date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, catid=catid, date__gte=f_rom)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, catid=catid, date__gte=f_rom)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, catid=catid, date__gte=f_rom)
+            
+            elif t_o != "0":#only to date selected
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, catid=catid, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, catid=catid, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, catid=catid, date__lte=t_o)
+            
+            else:#show all news with search
+
+                query1 = News.objects.filter(activate=1, name__contains=txt, catid=catid)
+                query2 = News.objects.filter(activate=1, short_text__contains=txt, catid=catid)
+                query3 = News.objects.filter(activate=1, body_text__contains=txt, catid=catid)
+
+        newscat = list(chain(query1, query2, query3))#To merge all queries(from itertools import chain)
+        newscat = list(dict.fromkeys(newscat))#To make a single query(otherways query will repeat 3 times)
+
+    else:
+
+        if catid == "0":#For searching in all news
+            #For searching category wise
+            
+            if f_rom != "0" and t_o != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, date__gte=f_rom, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, date__gte=f_rom, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, date__gte=f_rom, date__lte=t_o)
+            
+            elif f_rom != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, date__gte=f_rom)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, date__gte=f_rom)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, date__gte=f_rom)
+            
+            elif t_o != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, date__lte=t_o)
+            
+
+            else:
+                
+                query1 = News.objects.filter(activate=1, name__contains=mysearch)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch)
+            
+
+        else:
+
+            if f_rom != "0" and t_o != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, catid=catid, date__gte=f_rom, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, catid=catid, date__gte=f_rom, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, catid=catid, date__gte=f_rom, date__lte=t_o)
+            
+            elif f_rom != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, catid=catid, date__gte=f_rom)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, catid=catid, date__gte=f_rom)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, catid=catid, date__gte=f_rom)
+            
+            elif t_o != "0":
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, catid=catid, date__lte=t_o)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, catid=catid, date__lte=t_o)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, catid=catid, date__lte=t_o)
+            
+            else:
+
+                query1 = News.objects.filter(activate=1, name__contains=mysearch, catid=catid,)
+                query2 = News.objects.filter(activate=1, short_text__contains=mysearch, catid=catid,)
+                query3 = News.objects.filter(activate=1, body_text__contains=mysearch, catid=catid,)
+
+
+
+        newscat = list(chain(query1, query2, query3))#To merge all queries(from itertools import chain)
+        newscat = list(dict.fromkeys(newscat))#To make a single query(otherways query will repeat 3 times)
+
+    trend = Trending.objects.all().order_by('-pk')[:5]
+    site = Main.objects.get(pk=1)
+    cat = Category.objects.all()
+    subcat = SubCategory.objects.all()
+    popnews2 = News.objects.filter(activate=1).order_by('-newsview')[:3]
     
+    f_rom = []
+    t_o = []
+
+    for i in range(30):
+
+        #datetime.datetime.now() + datetime.timedelta(days=i)means it will add 1  for range upto 9
+        #datetime.datetime.now() - datetime.timedelta(days=i)means it will minus 1 for range upto 9
+        now = datetime.datetime.now() - datetime.timedelta(days=i)
+        year = now.year
+        month = now.month
+        day = now.day
+        hour = now.hour
+        minute = now.minute
+
+        if len(str(day)) == 1:
+            day = "0" + str(day)
+        if len(str(month)) == 1:
+            month = "0" + str(month)
+            
+        now = str(day) + "/" + str(month) + "/" + str(year)
+
+        f_rom.append(now)
+        
+    for i in range(30):
+        #datetime.datetime.now() + datetime.timedelta(days=i)means it will add 1  for range upto 9
+        #datetime.datetime.now() - datetime.timedelta(days=i)means it will minus 1 for range upto 9
+        now = datetime.datetime.now() - datetime.timedelta(days=i)
+        year = now.year
+        month = now.month
+        day = now.day
+        hour = now.hour
+        minute = now.minute
+
+        if len(str(day)) == 1:
+            day = "0" + str(day)
+        if len(str(month)) == 1:
+            month = "0" + str(month)
+            
+        now = str(day) + "/" + str(month) + "/" + str(year)
+
+        t_o.append(now)       
+
+   
+
+    paginator = Paginator(newscat, 12)
+    page = request.GET.get('page')#Here 'page' is class name of table.
+
+    try:
+        newspage = paginator.page(page)
+
+    except EmptyPage:
+        newspage = paginator.page(paginator, num_page)
+
+    except PageNotAnInteger:
+        newspage = paginator.page(1)
+   
+    return render(request, 'front/showall_news.html', {'newscat':newscat, 'site':site, 'trend':'trend', 'cat':cat, 'subcat':subcat, 'popnews2':popnews2, 'f_rom':f_rom, 't_o':t_o})
+

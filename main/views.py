@@ -14,6 +14,12 @@ from usermanager.models import UserManager
 import re
 from ipware import get_client_ip
 from ip2geotools.databases.noncommercial import DbIpCity
+from django.core.mail import send_mail
+from django.conf import settings
+from contactform.models import ContactForm
+from rest_framework import viewsets
+from .serializer import NewsSerializer
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -172,6 +178,8 @@ def site_setting(request):
         yt = request.POST.get('yt')
         link = request.POST.get('link')
         txt = request.POST.get('txt')
+        seo_name = request.POST.get('seo_name')
+        seo_keyword = request.POST.get('seo_keyword')
 
         if fb == "" : fb = "#"
         if tw == "" : tw = "#"
@@ -219,6 +227,9 @@ def site_setting(request):
         siteModel.yt = yt
         siteModel.link = link
         siteModel.about = txt
+
+        siteModel.seo_name = seo_name
+        siteModel.seo_keyword = seo_keyword
 
         if picurlfoot != "-": siteModel.picurlfoot = picurlfoot 
         if picnamefoot != "-": siteModel.picnamefoot = picnamefoot
@@ -329,3 +340,55 @@ def change_pass(request):
 
 
     return render(request, 'back/change_pass.html')
+
+def answer_comments(request, pk):
+
+     #login check started
+    if not request.user.is_authenticated:
+        return redirect('my_login')
+    #login check end
+
+    perm = 0
+    #"request.user" means current logged User
+    for i in request.user.groups.all():
+        if i.name == "masteruser": perm = 1
+
+    if perm == 0:
+        error = "Access Denied"
+        return render(request, 'back/error.html',{'error': error})
+
+    if request.method == 'POST':
+
+        text = request.POST.get('text')
+
+        if text == "":
+            error = "Please Answer"
+            return render(request, 'back/error.html',{'error': error})
+        
+        #First method with settings
+        to_email = ContactForm.objects.get(pk=pk).email
+        subject = 'Reply Mail'
+        message = text
+        from_email = settings.EMAIL_HOST_USER
+        emails = [to_email]
+        send_mail(subject, message, from_email, emails)
+
+        #Second Method without settings(Direct sending)
+        send_email(
+            'Reply Email',
+            text,
+            'mailbdeepaks@gmail.com',
+            [to_email],
+            fail_silently = False,
+
+        )
+
+
+    return render(request, 'back/answer_com.html', {'pk':pk})
+
+
+class NewsViewSet(viewsets.ModelViewSet):
+    
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    

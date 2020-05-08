@@ -6,7 +6,7 @@
 	{% block headblock %}
 	{% endblock %}
 
-	<meta charset="UTF-8">
+	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="{% static 'front/images/icons/favicon.png' %}"/>
@@ -238,7 +238,9 @@
 
 							{% endif %}
 							{% endfor %}
-
+							<li class="main-menu-active">
+								<a href="/all/news/">All News</a>
+							</li>
 						</ul>
 					</nav>
 				</div>
@@ -246,7 +248,8 @@
 		</div>
 	</header>
 		
-    
+
+
     
 
     {% block mainblock %}
