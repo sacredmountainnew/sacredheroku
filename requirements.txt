@@ -1,4 +1,4 @@
-python==3.7.3
+python==3.2.3
 asgiref==3.2.7
 astroid==2.3.3
 autopep8==1.5.2
