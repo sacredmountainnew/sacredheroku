@@ -35,7 +35,7 @@ jeepney==0.4.3
 jmespath==0.9.5
 keyring==21.2.0
 lazy-object-proxy==1.4.3
-lxml==4.5.0
+lxml==4.6.3
 maxminddb==1.5.2
 mccabe==0.6.1
 packaging==20.3
